@@ -4,10 +4,10 @@ ekf_global:
     frequency: 30.0
     two_d_mode: true
 
-    map_frame: map
+    map_frame: map_raw
     odom_frame: odom
     base_link_frame: base_footprint
-    world_frame: map
+    world_frame: map_raw
 
     # 로컬 EKF 출력(연속, 소규모 드리프트) → odometry/filtered
     odom0: /odometry/filtered_local
@@ -18,7 +18,7 @@ ekf_global:
                    false, false, false]
     odom0_differential: false
 
-    # navsat 변환 GPS(비연속, 절대 정합) → gps/odom (이제 frame_id=map)
+    # navsat 변환 GPS(비연속, 절대 정합) → gps/odom (increased weight for GPS)
     odom1: /gps/odom
     odom1_config: [true, true, false,
                    false, false, false,
@@ -26,6 +26,14 @@ ekf_global:
                    false, false, false,
                    false, false, false]
     odom1_differential: false
+
+    # Increase GPS relative weight by reducing process noise for position
+    process_noise_covariance_diagonal:
+      [0.01, 0.01, 1.0,
+       0.05, 0.05, 0.05,
+       0.5,  0.5,  1.0,
+       0.1,  0.1,  0.2,
+       0.5,  0.5,  1.0]
 
     # 자세는 IMU로 보정
     imu0: /imu/with_cov

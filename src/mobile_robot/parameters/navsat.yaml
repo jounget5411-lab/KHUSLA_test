@@ -4,8 +4,8 @@ navsat_transform:
     frequency: 30.0
     delay: 0.0
 
-    # 이 노드가 내보내는 "월드" 프레임을 UTM으로 고정
-    world_frame: map
+    # 이 노드가 내보내는 "월드" 프레임을 map_raw로 설정 (회전 보정 전)
+    world_frame: map_raw
     base_link_frame: base_footprint
 
     # UTM<->ENU 변환 TF도 같이 내보냄(/tf_static)
