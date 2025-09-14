@@ -1,0 +1,23 @@
+navsat_transform:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 30.0
+    delay: 0.0
+
+    # 이 노드가 내보내는 "월드" 프레임을 UTM으로 고정
+    world_frame: map
+    base_link_frame: base_footprint
+
+    # UTM<->ENU 변환 TF도 같이 내보냄(/tf_static)
+    broadcast_cartesian_transform: false
+    broadcast_cartesian_transform_as_parent_frame: false
+
+    # yaw은 로컬 오도메트리로(imu+로컬 ekf) 가져오는 구성이 일반적
+    use_odometry_yaw: true
+
+    # 시뮬에선 대기 없이 바로 동작
+    wait_for_datum: false
+    zero_altitude: true
+
+    # /gps/odom 발행
+    publish_filtered_gps: true
