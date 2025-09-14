@@ -20,9 +20,9 @@ class WorldPoseToNavSat(Node):
         self.declare_parameter('heading_deg', 0.0)  # <spherical_coordinates><heading_deg>
         self.declare_parameter('frame_id', 'gps_link')
 
-        # ★ 공분산(표준편차) 파라미터 추가: 시뮬 기준 보수/공격적으로 조정 가능
-        self.declare_parameter('std_xy_m', 0.15)  # 15 cm
-        self.declare_parameter('std_z_m', 0.30)   # 30 cm
+        # ★ 공분산(표준편차) 파라미터 추가: GPS를 더 신뢰하도록 조정
+        self.declare_parameter('std_xy_m', 0.1)   # 10 cm (더 정확하게)
+        self.declare_parameter('std_z_m', 0.15)   # 15 cm (더 정확하게)
 
         self.lat0 = float(self.get_parameter('lat0_deg').value)
         self.lon0 = float(self.get_parameter('lon0_deg').value)

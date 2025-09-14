@@ -111,8 +111,8 @@ def generate_launch_description():
             {'alt0_m':   114.193},
             {'heading_deg': 0.0},
             {'frame_id': 'gps_link'},
-            {'std_xy_m': 0.15},
-            {'std_z_m':  0.30},
+            {'std_xy_m': 0.1},   # Increased GPS accuracy
+            {'std_z_m':  0.15},  # Increased GPS accuracy
             {'use_sim_time': True},
         ],
     )
@@ -184,6 +184,21 @@ def generate_launch_description():
         output='screen',
     )
 
+    # Add initial orientation correction for proper coordinate frame alignment
+    # This corrects for the northwest (140-160°) initial vehicle orientation
+    tf_map_orientation_correction = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='tf_map_orientation_correction',
+        arguments=[
+            '0', '0', '0',
+            '0', '0', '2.8',  # Apply same yaw offset as vehicle spawn
+            'map_raw',
+            'map'
+        ],
+        output='screen',
+    )
+
     # ekf_global: 출력만 /odometry/filtered_map 으로 리매핑
     # (입력은 ekf_global.yaml에서 odom0: /odometry/filtered_local 로 설정되어 있어야 함)
     ekf_global = Node(
@@ -251,6 +266,15 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True, 'fixed_frame': 'map', 'base_frame': 'base_footprint'}],
     )
 
+    # Frame alignment debug visualization
+    frame_debug = Node(
+        package='mobile_robot',
+        executable='frame_alignment_debug.py',
+        name='frame_alignment_debug',
+        output='screen',
+        parameters=[{'use_sim_time': True}],
+    )
+
     return LaunchDescription([
         declare_world, declare_spawn_x, declare_spawn_y, declare_spawn_z, declare_spawn_Y,
         set_ign_res, set_gz_res,
@@ -265,10 +289,12 @@ def generate_launch_description():
         navsat,
         disable_shm,
         tf_map_to_utm,
+        tf_map_orientation_correction,
         ekf_global,
         gps_centerline_node,
         path_planner_node,
         motion_planner_node,
         veh_if,
         pp_result_viz,
+        frame_debug,
     ])
